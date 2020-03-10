@@ -87,7 +87,7 @@ class client
      * Convert item to XML job description for DownloadMaster
      * @see https://westbyte.com/dm/index.phtml
      */
-    public static function itemToXml(int $id, string $src, string $filename, string $description): string
+    public static function itemToXml(int $id, string $src, string $filename, string $description, string $savedir = null): string
     {
         return
             "
@@ -95,7 +95,7 @@ class client
         <ID>$id</ID>
         <URL>$src</URL>
         <State>0</State>
-        <SaveDir>" . DM_DIR . "</SaveDir>
+        <SaveDir>" . DM_DIR . $savedir . "</SaveDir>
         <MaxSections>" . DM_CONCURRENCY ."</MaxSections>
         <Comment>$description</Comment>
         <SaveAs>$filename</SaveAs>
@@ -111,20 +111,21 @@ class client
      * Convert item to NFO Kodi description
      * @see https://kodi.wiki/view/NFO_files
      */
-    public static function itemToNFO(object $item, string $poster): string
+    public static function itemToNFO(object $item, string $poster = null, string $title2 = null): string
     {
         $xml =
 '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <movie>
-    <title>' . $item->title . '</title>
+    <title>' . $item->title . $title2 . '</title>
     <year>'  . $item->year . '</year>
     <plot>'  . $item->plot . '</plot>
-    <director>' . $item->director . '</director>
+    <director>' . $item->director . '</director>' .
+    ($poster ? ('
     <thumb aspect="poster" preview="' . $poster . '">' . $poster . '</thumb>  
     <thumb aspect="banner" preview="' . $poster . '">' . $poster . '</thumb>  
     <thumb aspect="clearart" preview="' . $poster . '">' . $poster . '</thumb>  
     <thumb aspect="discart" preview="' . $poster . '">' . $poster . '</thumb>  
-    <thumb aspect="landscape" preview="' . $poster . '">' . $poster . '</thumb>  
+    <thumb aspect="landscape" preview="' . $poster . '">' . $poster . '</thumb>') : '') . '  
     <uniqueid type="imdb" default="true">' . $item->imdb . '</uniqueid>
     <rating name="imdb" max="10" default="true">
         <value>' . $item->imdb_rating . '</value>
