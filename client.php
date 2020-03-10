@@ -109,17 +109,50 @@ class client
      */
     public static function itemToNFO(object $item, string $poster): string
     {
-        return
+        $xml =
 '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <movie>
     <title>' . $item->title . '</title>
     <year>'  . $item->year . '</year>
     <plot>'  . $item->plot . '</plot>
     <director>' . $item->director . '</director>
-    <thumb aspect="poster" preview="' . $poster . '"></thumb>  
+    <thumb aspect="poster" preview="' . $poster . '">' . $poster . '</thumb>  
+    <thumb aspect="banner" preview="' . $poster . '">' . $poster . '</thumb>  
+    <thumb aspect="clearart" preview="' . $poster . '">' . $poster . '</thumb>  
+    <thumb aspect="discart" preview="' . $poster . '">' . $poster . '</thumb>  
+    <thumb aspect="landscape" preview="' . $poster . '">' . $poster . '</thumb>  
     <uniqueid type="imdb" default="true">' . $item->imdb . '</uniqueid>
+    <rating name="imdb" max="10" default="true">
+        <value>' . $item->imdb_rating . '</value>
+        <votes>' . $item->imdb_votes . '</votes>
+    </rating>
+    <userrating>' . $item->rating . '</userrating>
+    #GENRE#   
+    #COUNTRY#
+    #ACTORS#   
 </movie>
 ';
+        $ganras = $item->genres;
+        $txt    = '';
+        foreach ($ganras as $g) {
+            $txt .= '<genre>' . $g->title . '</genre>';
+        }
+        $xml = str_replace('#GENRE#', $txt . "\n", $xml);
+
+        $countries = $item->countries;
+        $txt    = '';
+        foreach ($countries as $c) {
+            $txt .= '<country>' . $c->title . '</country>';
+        }
+        $xml = str_replace('#COUNTRY#', $txt . "\n", $xml);
+
+        $actors = explode(',', $item->cast);
+        $txt    = '';
+        foreach ($actors as $c) {
+            $txt .= '<actor><name>' . trim($c) . '</name></actor>';
+        }
+        $xml = str_replace('#ACTORS#', $txt . "\n", $xml);
+        return $xml;
     }
 
     /**

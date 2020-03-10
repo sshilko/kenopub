@@ -50,7 +50,7 @@ function bookmarksAction() {
 
                 foreach ($itemData->videos as $v) {
                     foreach ($v->files as $f) {
-                        if ($f->url->http && ($f->quality === '1080p' || $f->quality === '720p')) {
+                        if ($f->url->http && (in_array($f->quality, ['2160p', '1080p','720p']))) {
                             $src     = $f->url->http;
                             $quality = $f->quality;
                             break 2;
