@@ -91,10 +91,13 @@ class client
         <ID>$id</ID>
         <URL>$src</URL>
         <State>0</State>
+        <SaveDir>" . DM_DIR . "</SaveDir>
+        <MaxSections>" . DM_CONCURRENCY ."</MaxSections>
         <Comment>$description</Comment>
         <SaveAs>$filename</SaveAs>
         <ResumeMode>2</ResumeMode>
         <DownloadTime>1</DownloadTime>
+        <ContentType>video/mp4</ContentType>
         <stodt>2</stodt>
 </DownloadFile>
 ";

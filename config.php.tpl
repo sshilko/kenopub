@@ -17,6 +17,10 @@ define('ACTION', isset($argv[1]) ? $argv[1] : 'help');
 define('ACTIONSLIST', implode(',', array_map(function ($i) { return (substr($i, -6) === 'action') ? substr($i, 0, strlen($i) - 6) : null; },
                                    get_defined_functions(true)['user'])));
 
+#download manager settings
+define('DM_DIR', 'E:\\out\\bookmarks\\');
+define('DM_CONCURRENCY', '2');
+
 if (!in_array(ACTION, explode(',', ACTIONSLIST))) {
     throw new \RuntimeException(sprintf('Action "%s" was not defined', ACTION));
 }

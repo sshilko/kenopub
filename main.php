@@ -60,16 +60,18 @@ function bookmarksAction() {
 
                 if (is_string($src)) {
                     #$id, string $src, string $filename, string $description
-                    $filename = str_replace(['/', ':'],
-                                            ['', ''],
+                    $filename = str_replace(['/', ':'. '\''],
+                                            ['',  '',  ''],
                                             $itemData->title . '.' . $itemData->year . '.' . $quality . '.' . $i->id);
                     $filename = str_replace('  ', ' ', $filename);
 
                     $data[]   = client::itemToXml($xid, $src, $filename . '.mp4', $itemData->plot);
                     $nfo      = client::itemToNFO($itemData, $filename . '.jpg');
 
-                    file_put_contents(OUTDIR . DIRECTORY_SEPARATOR . ACTION . DIRECTORY_SEPARATOR . $filename . '.jpg', file_get_contents($poster));
-                    file_put_contents(OUTDIR . DIRECTORY_SEPARATOR . ACTION . DIRECTORY_SEPARATOR . $filename . '.nfo', $nfo);
+                    file_put_contents(OUTDIR . DIRECTORY_SEPARATOR . ACTION . DIRECTORY_SEPARATOR . $filename . '.jpg',
+                        file_get_contents($poster));
+                    file_put_contents(OUTDIR . DIRECTORY_SEPARATOR . ACTION . DIRECTORY_SEPARATOR . $filename . '.nfo',
+                        mb_convert_encoding($nfo, 'UTF-8'));
                 } else {
                     echo "No SRC found for " . $itemData->title . "\n";
                 }
@@ -83,7 +85,8 @@ function bookmarksAction() {
          * Save as Download master joblist
          */
         $xml = client::itemsXml(implode("\n", $data));
-        file_put_contents(OUTDIR . DIRECTORY_SEPARATOR . ACTION . DIRECTORY_SEPARATOR . $b->id . '.xml', $xml);
+        file_put_contents(OUTDIR . DIRECTORY_SEPARATOR . ACTION . DIRECTORY_SEPARATOR . $b->id . '.xml',
+            mb_convert_encoding($xml, 'UTF-8'));
     }
 }
 
