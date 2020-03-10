@@ -46,7 +46,7 @@ function bookmarksAction() {
 
                 $src      = null;
                 $quality  = null;
-                $poster   = $itemData->posters->small;
+                $poster   = (isset($itemData->posters->big)) ? $itemData->posters->big : $itemData->posters->small;
 
                 foreach ($itemData->videos as $v) {
                     foreach ($v->files as $f) {
