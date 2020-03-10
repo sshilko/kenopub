@@ -23,6 +23,9 @@ function bookmarksAction() {
 
     $c = new client(ACCESS_TOKEN);
     $bookmarks = $c->url('/v1/bookmarks');
+    if (!isset($bookmarks->items)) {
+        return;
+    }
 
     foreach ($bookmarks->items as $b) {
         $end   = false;
@@ -40,7 +43,7 @@ function bookmarksAction() {
         foreach ($items as $i) {
             $xid++;
             $xml = null;
-            if ($i->type === 'movie') {
+            if ($i->type === 'movie' || $i->type === 'documovie') {
                 $movie = $c->url('v1/items/' . $i->id);
                 $itemData = $movie->item;
 
@@ -50,7 +53,7 @@ function bookmarksAction() {
 
                 foreach ($itemData->videos as $v) {
                     foreach ($v->files as $f) {
-                        if ($f->url->http && (in_array($f->quality, ['2160p', '1080p','720p']))) {
+                        if ($f->url->http && (in_array($f->quality, explode(',', QUALITY)))) {
                             $src     = $f->url->http;
                             $quality = $f->quality;
                             break 2;
@@ -68,16 +71,19 @@ function bookmarksAction() {
                     $data[]   = client::itemToXml($xid, $src, $filename . '.mp4', $itemData->plot);
                     $nfo      = client::itemToNFO($itemData, $filename . '.jpg');
 
-                    file_put_contents(OUTDIR . DIRECTORY_SEPARATOR . ACTION . DIRECTORY_SEPARATOR . $filename . '.jpg',
-                        file_get_contents($poster));
+                    $thumb = OUTDIR . DIRECTORY_SEPARATOR . ACTION . DIRECTORY_SEPARATOR . $filename . '.jpg';
+                    if (!is_readable($thumb)) {
+                        file_put_contents(OUTDIR . DIRECTORY_SEPARATOR . ACTION . DIRECTORY_SEPARATOR . $filename . '.jpg',
+                                          file_get_contents($poster));
+                    }
                     file_put_contents(OUTDIR . DIRECTORY_SEPARATOR . ACTION . DIRECTORY_SEPARATOR . $filename . '.nfo',
-                        mb_convert_encoding($nfo, 'UTF-8'));
+                                      mb_convert_encoding($nfo, 'UTF-8'));
                 } else {
-                    echo "No SRC found for " . $itemData->title . "\n";
+                    echo "NO SRC found for " . $itemData->title . ' [' . $i->id . '] ' . json_encode($itemData) . "\n";
                 }
 
             } else {
-                echo "Non movie type not supported yet for: " . $i->title . "\n";
+                echo "Unsupported type " . $i->title . ' [' . $i->id . '] ' . json_encode($i) . "\n";
             }
         }
 
@@ -86,7 +92,7 @@ function bookmarksAction() {
          */
         $xml = client::itemsXml(implode("\n", $data));
         file_put_contents(OUTDIR . DIRECTORY_SEPARATOR . ACTION . DIRECTORY_SEPARATOR . $b->id . '.xml',
-            mb_convert_encoding($xml, 'UTF-8'));
+                          mb_convert_encoding($xml, 'UTF-8'));
     }
 }
 

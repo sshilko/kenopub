@@ -62,7 +62,11 @@ class client
 
         $response = curl_exec($ch);
         curl_close($ch);
-        return json_decode($response, false, 512, JSON_THROW_ON_ERROR);
+        $response = json_decode($response, false, 512, JSON_THROW_ON_ERROR);
+        if ($response && $response->status != 200) {
+            $this->info('ERROR ' . $response->error);
+        }
+        return $response;
     }
 
     public function url(string $url, bool $decode = true)
