@@ -1,0 +1,5 @@
+Keno pub PHP client
+
+This is simple keno.pub client that can access official API.
+
+`php main.php`
