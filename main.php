@@ -35,7 +35,7 @@ function syncData(array $needtype = ['movie', 'documovie']) {
         return;
     }
 
-    $nn = 0;
+    #$nn = 0;
     foreach ($bookmarks->items as $b) {
         $end   = false;
         $items = [];
@@ -97,10 +97,10 @@ function syncData(array $needtype = ['movie', 'documovie']) {
                 }
 
             } elseif (in_array($i->type, $needtype) && $i->type === 'serial') {
-                if ($nn > 1) {
-                    break;
-                }
-                $nn++;
+                #if ($nn > 1) {
+                #    break;
+                #}
+                #$nn++;
                 $serie = $c->url('v1/items/' . $i->id);
                 $serieData = $serie->item;
                 $seriename = str_replace(['/', ':'. '\''],
