@@ -82,7 +82,7 @@ function syncData(array $needtype = ['movie', 'documovie']) {
                     echo 'Processing ' . $filename . "\n";
 
                     $xid++;
-                    $data[]   = client::itemToXml($xid, $src, $filename . '.mp4', $itemData->plot, '\\' . ACTION);
+                    $data[]   = client::itemToXml($xid, $src, $filename . '.mp4', $itemData->plot, '\\' . ACTION . '\\');
                     $nfo      = client::itemToNFO($itemData, $filename . '.jpg');
 
                     $thumb = OUTDIR . DIRECTORY_SEPARATOR . ACTION . DIRECTORY_SEPARATOR . $filename . '.jpg';
@@ -150,7 +150,7 @@ function syncData(array $needtype = ['movie', 'documovie']) {
                         echo 'Processing ' . $filename . "\n";
 
                         $xid++;
-                        $sdata[] = client::itemToXml($xid, $src, $filename . '.mp4', $serieData->plot,  ACTION . '\\' . $serieDir);
+                        $sdata[] = client::itemToXml($xid, $src, $filename . '.mp4', $serieData->plot,  ACTION . '\\' . $serieDir . '\\');
 
                         $thumb = $seriePath . DIRECTORY_SEPARATOR . $filename . '.jpg';
                         $posterPath = $filename . '.jpg';
