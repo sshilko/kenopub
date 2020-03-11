@@ -75,9 +75,9 @@ function syncData(array $needtype = ['movie', 'documovie']) {
                     $filename = str_replace(['/', ':'. '\''],
                                             ['',  '',  ''],
                                             $itemData->title . '.' . $itemData->year . '.' . $quality . '.' . $i->id);
-                    $filename = str_replace('  ', ' ', $filename);
-                    $filename = str_replace('  ', ' ', $filename);
-                    $filename = str_replace('  ', ' ', $filename);
+
+                    $filename = preg_replace("/[^[:alnum:][:space:].!]/u", '', $filename);
+                    $filename = trim(preg_replace("/\s{2,}/", ' ',             $filename));
 
                     echo 'Processing ' . $filename . "\n";
 
@@ -106,13 +106,10 @@ function syncData(array $needtype = ['movie', 'documovie']) {
                 $seriename = str_replace(['/', ':'. '\''],
                                          ['',  '',  ''],
                                          $serieData->title . '.' . $serieData->year . '.' . $i->id);
-                $seriename = str_replace('  ', ' ', $seriename);
-                $seriename = str_replace('  ', ' ', $seriename);
-                $seriename = str_replace('  ', ' ', $seriename);
 
-                $serieDir  = str_replace('  ', ' ', $seriename);
-                $serieDir  = str_replace('  ', ' ', $serieDir);
-                $serieDir  = str_replace('  ', ' ', $serieDir);
+                $seriename = preg_replace("/[^[:alnum:][:space:].!]/u", '', $seriename);
+                $seriename = trim(preg_replace("/\s{2,}/", ' ',             $seriename));
+                $serieDir  = $seriename;
 
                 $seriePath = OUTDIR . DIRECTORY_SEPARATOR . ACTION . DIRECTORY_SEPARATOR . $serieDir;
                 @mkdir($seriePath, 0777, true);
@@ -141,12 +138,13 @@ function syncData(array $needtype = ['movie', 'documovie']) {
                         $filename = str_replace(['/', ':'. '\''],
                                                 ['',  '',  ''],
                                                 $episode->title . '.' . $serieData->year . '.' . $quality . '.' . $i->id . '.' . $episode->id);
-                        $filename = str_replace('  ', ' ', $filename);
-                        $filename = str_replace('  ', ' ', $filename);
-                        $filename = str_replace('  ', ' ', $filename);
+
+                        $filename = preg_replace("/[^[:alnum:][:space:].!]/u", '', $filename);
+                        $filename = trim(preg_replace("/\s{2,}/", ' ',             $filename));
+
                         $filePrefix = 'S' . str_pad((string) $season->number, 3, '0',  STR_PAD_LEFT) .
                                       'E' . str_pad((string) $episode->number, 3, '0', STR_PAD_LEFT);
-                        $filename =  $filePrefix . ($filename ? (' ' . $filename) : '');
+                        $filename   =  $filePrefix . ($filename ? (' ' . $filename) : '');
                         echo 'Processing ' . $filename . "\n";
 
                         $xid++;
