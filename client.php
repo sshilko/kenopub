@@ -20,28 +20,72 @@ class client
     }
 
     public static function getCode(): ?stdClass {
-        $data = self::post(self::AUTHHOST
+        $data = self::postPublic(self::AUTHHOST
             . '?grant_type='    . self::DCODE
             . '&client_id='     . self::CLIENT
             . '&client_secret=' . self::SECRET);
         return $data;
     }
 
+    /**
+     * @see https://kinoapi.com/authentication.html#id12
+     *
+     * @param string $refreshToken
+     * @return stdClass|null
+     */
+    public static function getExtendedAccessToken(string $refreshToken): ?stdClass {
+        $data = self::postPublic(self::AUTHHOST
+            . '?grant_type=refresh_token'
+            . '&client_id='     . self::CLIENT
+            . '&client_secret=' . self::SECRET
+            . '&refresh_token=' . $refreshToken);
+        return $data;
+    }
+
     public static function verifyCode(string $code): ?stdClass
     {
-        return self::post(self::AUTHHOST
+        return self::postPublic(self::AUTHHOST
             . '?grant_type='    . self::DTOKEN
             . '&client_id='     . self::CLIENT
             . '&client_secret=' . self::SECRET
             . '&code=' . $code);
     }
 
-    private static function post(string $url): ?stdClass
+    /**
+     * @see https://kinoapi.com/api_device.html#api-device-notify
+     * @param string $title
+     */
+    public function setClientInfo(string $title): ?stdClass
+    {
+        return $this->postPrivate(self::APIHOST . '/v1/device/notify',
+            ['title' => $title]
+        );
+    }
+
+    private function postPrivate(string $url, array $postData = null): ?stdClass
+    {
+        $ch = curl_init($url);
+        if ($postData) {
+            $postData = json_encode($postData, JSON_UNESCAPED_UNICODE | JSON_BIGINT_AS_STRING);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+        }
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_USERAGENT, self::UA);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $this->accessToken]);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        $response = curl_exec($ch);
+        curl_close($ch);
+        return json_decode($response, false, 512, JSON_THROW_ON_ERROR);
+    }
+
+    private static function postPublic(string $url): ?stdClass
     {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_USERAGENT, self::UA);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
         $response = curl_exec($ch);
         curl_close($ch);
         return json_decode($response, false, 512, JSON_THROW_ON_ERROR);
@@ -59,6 +103,7 @@ class client
         curl_setopt($ch, CURLOPT_USERAGENT, self::UA);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $this->accessToken]);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
 
         $response = curl_exec($ch);
         curl_close($ch);
@@ -99,11 +144,7 @@ class client
         <MaxSections>" . DM_CONCURRENCY ."</MaxSections>
         <Comment>$description</Comment>
         <SaveAs>$filename</SaveAs>
-        <ResumeMode>2</ResumeMode>
-        <DownloadTime>1</DownloadTime>
-        <ContentType>video/mp4</ContentType>
-        <stodt>2</stodt>
-</DownloadFile>
+</DownloadFile>\n
 ";
     }
 

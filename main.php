@@ -3,6 +3,7 @@
 include_once 'client.php';
 
 include_once 'config.php';
+
 call_user_func(ACTION . 'Action', $argv) && exit(0);
 
 /**
@@ -82,7 +83,8 @@ function syncData(array $needtype = ['movie', 'documovie']) {
                     echo 'Processing ' . $filename . "\n";
 
                     $xid++;
-                    $data[]   = client::itemToXml($xid, $src, $filename . '.mp4', $itemData->plot, '\\' . ACTION . '\\');
+                   #$data[]   = client::itemToXml($xid, $src, $filename . '.mp4', $itemData->plot, '\\' . ACTION . '\\');
+                    $data[]   = client::itemToXml($xid, $src, $filename . '.mp4', $itemData->plot);
                     $nfo      = client::itemToNFO($itemData, $filename . '.jpg');
 
                     $thumb = OUTDIR . DIRECTORY_SEPARATOR . ACTION . DIRECTORY_SEPARATOR . $filename . '.jpg';
@@ -148,7 +150,8 @@ function syncData(array $needtype = ['movie', 'documovie']) {
                         echo 'Processing ' . $filename . "\n";
 
                         $xid++;
-                        $sdata[] = client::itemToXml($xid, $src, $filename . '.mp4', $serieData->plot,  ACTION . '\\' . $serieDir . '\\');
+                       #$sdata[] = client::itemToXml($xid, $src, $filename . '.mp4', $serieData->plot,  ACTION . '\\' . $serieDir . '\\');
+                        $sdata[] = client::itemToXml($xid, $src, $filename . '.mp4', $serieData->plot);
 
                         $thumb = $seriePath . DIRECTORY_SEPARATOR . $filename . '.jpg';
                         $posterPath = $filename . '.jpg';
@@ -204,9 +207,15 @@ function accessTokenAction()
             sleep($code->interval + 1);
         }
 
-        if (isset($result->access_token)) {
+        if (isset($result->access_token) && isset($result->refresh_token)) {
+            $result = client::getExtendedAccessToken($result->refresh_token);
             $accessToken = $result->access_token;
+
             echo 'Your accesToken is ' . $accessToken . ' please put it into config' . "\n";
+            echo 'Your refreshToken is ' . $result->refresh_token . ' please put it into config' . "\n";
+
+            (new client($accessToken))->setClientInfo(CLIENT_TITLE);
+
             exit;
             break;
         }
