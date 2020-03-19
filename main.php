@@ -2,6 +2,7 @@
 
 setlocale(LC_ALL, 'en_US.UTF-8');
 mb_internal_encoding("UTF-8");
+ini_set('default_charset', 'UTF-8');
 
 include_once 'client.php';
 
