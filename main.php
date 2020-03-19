@@ -1,5 +1,8 @@
 <?php declare(strict_types=1);
 
+setlocale(LC_ALL, 'en_US.UTF-8');
+mb_internal_encoding("UTF-8");
+
 include_once 'client.php';
 
 include_once 'config.php';
@@ -79,6 +82,7 @@ function syncData(array $needtype = ['movie', 'documovie']) {
 
                     $filename = preg_replace("/[^[:alnum:][:space:].!]/u", '', $filename);
                     $filename = trim(preg_replace("/\s{2,}/", ' ',             $filename));
+                    $filename = mb_convert_encoding(trim($filename), 'UTF-8');
 
                     echo 'Processing ' . $filename . "\n";
 
@@ -111,6 +115,8 @@ function syncData(array $needtype = ['movie', 'documovie']) {
 
                 $seriename = preg_replace("/[^[:alnum:][:space:].!]/u", '', $seriename);
                 $seriename = trim(preg_replace("/\s{2,}/", ' ',             $seriename));
+                $seriename = mb_convert_encoding(trim($seriename), 'UTF-8');
+
                 $serieDir  = $seriename;
 
                 $seriePath = OUTDIR . DIRECTORY_SEPARATOR . ACTION . DIRECTORY_SEPARATOR . $serieDir;
@@ -148,6 +154,8 @@ function syncData(array $needtype = ['movie', 'documovie']) {
                                       'E' . str_pad((string) $episode->number, 3, '0', STR_PAD_LEFT);
                         $filename   =  $filePrefix . ($filename ? (' ' . $filename) : '');
                         echo 'Processing ' . $filename . "\n";
+
+                        $filename = mb_convert_encoding(trim($filename), 'UTF-8');
 
                         $xid++;
                        #$sdata[] = client::itemToXml($xid, $src, $filename . '.mp4', $serieData->plot,  ACTION . '\\' . $serieDir . '\\');

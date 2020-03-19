@@ -134,7 +134,11 @@ class client
      */
     public static function itemToXml(int $id, string $src, string $filename, string $description, string $savedir = null): string
     {
-        return
+        $filename    = mb_convert_encoding(trim($filename),             'UTF-8');
+        $description = mb_convert_encoding(trim($description),          'UTF-8');
+        $savedir     = ($savedir) ? mb_convert_encoding(trim($savedir), 'UTF-8') : '';
+
+        $xml =
             "
  <DownloadFile>
         <ID>$id</ID>
@@ -146,6 +150,7 @@ class client
         <SaveAs>$filename</SaveAs>
 </DownloadFile>\n
 ";
+        return mb_convert_encoding(trim($xml), 'UTF-8');
     }
 
     /**
@@ -154,13 +159,19 @@ class client
      */
     public static function itemToNFO(object $item, string $poster = null, string $title2 = null): string
     {
+        $title  = mb_convert_encoding(trim($item->title . $title2), 'UTF-8');
+        $year   = (int) $item->year;
+        $plot   = mb_convert_encoding(trim($item->plot),            'UTF-8');
+        $direc  = mb_convert_encoding(trim($item->director),        'UTF-8');
+        $poster = ($poster) ? mb_convert_encoding(trim($poster),    'UTF-8') : '';
+
         $xml =
 '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <movie>
-    <title>' . $item->title . $title2 . '</title>
-    <year>'  . $item->year . '</year>
-    <plot>'  . $item->plot . '</plot>
-    <director>' . $item->director . '</director>' .
+    <title>' . $title . '</title>
+    <year>'  . $year . '</year>
+    <plot>'  . $plot . '</plot>
+    <director>' . $direc . '</director>' .
     ($poster ? ('
     <thumb aspect="poster" preview="' . $poster . '">' . $poster . '</thumb>  
     <thumb aspect="banner" preview="' . $poster . '">' . $poster . '</thumb>  
@@ -181,21 +192,21 @@ class client
         $ganras = $item->genres;
         $txt    = '';
         foreach ($ganras as $g) {
-            $txt .= '<genre>' . $g->title . '</genre>';
+            $txt .= '<genre>' . mb_convert_encoding(trim($g->title), 'UTF-8') . '</genre>';
         }
         $xml = str_replace('#GENRE#', $txt . "\n", $xml);
 
         $countries = $item->countries;
         $txt    = '';
         foreach ($countries as $c) {
-            $txt .= '<country>' . $c->title . '</country>';
+            $txt .= '<country>' . mb_convert_encoding(trim($c->title), 'UTF-8') . '</country>';
         }
         $xml = str_replace('#COUNTRY#', $txt . "\n", $xml);
 
         $actors = explode(',', $item->cast);
         $txt    = '';
         foreach ($actors as $c) {
-            $txt .= '<actor><name>' . trim($c) . '</name></actor>';
+            $txt .= '<actor><name>' . mb_convert_encoding(trim($c), 'UTF-8') . '</name></actor>';
         }
         $xml = str_replace('#ACTORS#', $txt . "\n", $xml);
         return $xml;
