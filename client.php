@@ -128,6 +128,21 @@ class client
         echo $str . "\n";
     }
 
+    private static function getFileInfo(string $uri): ?array
+    {
+        $curl = curl_init($uri);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_HEADER, true);
+        curl_setopt($curl, CURLOPT_NOBODY, true);
+        curl_exec($curl);
+        $info = curl_getinfo($curl);
+        if ($info && !empty($info['download_content_length'])) {
+            return $info;
+        }
+        return null;
+    }
+
     /**
      * Convert item to XML job description for DownloadMaster
      * @see https://westbyte.com/dm/index.phtml
@@ -137,12 +152,19 @@ class client
         $filename    = mb_convert_encoding(trim($filename),             'UTF-8');
         $description = mb_convert_encoding(trim($description),          'UTF-8');
         $savedir     = ($savedir) ? mb_convert_encoding(trim($savedir), 'UTF-8') : '';
+        $fileInfo    = self::getFileInfo($src);
 
         $xml =
             "
  <DownloadFile>
         <ID>$id</ID>
         <URL>$src</URL>
+        " .
+        ((isset($fileInfo['download_content_length'])) ? ("<Size>" . (int) $fileInfo['download_content_length'] . "</Size>") : '')
+        . "
+        " .
+        ((isset($fileInfo['content_type'])) ? ("<ContentType>" . (string) $fileInfo['content_type'] . "</ContentType>") : '')
+        . "
         <State>0</State>
         <SaveDir>" . DM_DIR . $savedir . "</SaveDir>
         <MaxSections>" . DM_CONCURRENCY ."</MaxSections>

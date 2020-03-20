@@ -68,7 +68,7 @@ function syncData(array $needtype = ['movie', 'documovie']) {
                 foreach ($itemData->videos as $v) {
                     foreach ($v->files as $f) {
                         if ($f->url->http && (in_array($f->quality, explode(',', QUALITY)))) {
-                            $src     = $f->url->http;
+                            $src     = normalizeKinoUrl($f->url->http);
                             $quality = $f->quality;
                             break 2;
                         }
@@ -133,7 +133,7 @@ function syncData(array $needtype = ['movie', 'documovie']) {
 
                         foreach ($episode->files as $f) {
                             if ($f->url->http && (in_array($f->quality, explode(',', QUALITY)))) {
-                                $src     = $f->url->http;
+                                $src     = normalizeKinoUrl($f->url->http);
                                 $quality = $f->quality;
                                 break;
                             }
@@ -229,6 +229,11 @@ function accessTokenAction()
             break;
         }
     }
+}
+
+function normalizeKinoUrl(string $url)
+{
+    return str_replace(CDN_SERVER, SANE_SERVER, $url);
 }
 
 /**
