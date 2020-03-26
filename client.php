@@ -58,7 +58,7 @@ class client
     public function setClientInfo(string $title): ?stdClass
     {
         return $this->postPrivate(self::APIHOST . '/v1/device/notify',
-            ['title' => $title]
+            ['title' => $title, 'hardware' => 'Zilog Z80', 'software' => 'sshilko/kenopub']
         );
     }
 
@@ -107,11 +107,15 @@ class client
 
         $response = curl_exec($ch);
         curl_close($ch);
-        $response = json_decode($response, false, 512, JSON_THROW_ON_ERROR);
-        if ($response && $response->status != 200) {
-            $this->info('ERROR ' . $response->error);
+        if (is_string($response)) {
+            $response = json_decode($response, false, 512, JSON_THROW_ON_ERROR);
+            if ($response && $response->status != 200) {
+                $this->info('ERROR ' . $response->error);
+            }
+            return $response;
+        } else {
+            return null;
         }
-        return $response;
     }
 
     public function url(string $url, bool $decode = true)

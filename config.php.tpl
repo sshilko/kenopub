@@ -3,8 +3,6 @@
 
 #actually usefull settinfs
 define('ACCESS_TOKEN',  '');
-define('REFRESH_TOKEN', '');
-
 
 
 

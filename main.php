@@ -45,11 +45,17 @@ function syncData(array $needtype = ['movie', 'documovie']) {
         $end   = false;
         $items = [];
         for ($i = 1; $i < PHP_INT_MAX; $i++) {
+            sleep(1);
         #for ($i = 1; $i < 2; $i++) {
             $itemsRaw = $c->url('v1/bookmarks/' . $b->id . '?page=' . $i);
-            $items    = array_merge($items, $itemsRaw->items);
-            if ($itemsRaw->pagination->current == $itemsRaw->pagination->total) {
-                break;
+            if ($itemsRaw) {
+                $items = array_merge($items, $itemsRaw->items);
+                if ($itemsRaw->pagination->current == $itemsRaw->pagination->total) {
+                    break;
+                }
+            } else {
+                echo "Failed ... continuing \n";
+                continue;
             }
         }
         $data  = [];
@@ -59,6 +65,10 @@ function syncData(array $needtype = ['movie', 'documovie']) {
             $xml = null;
             if (in_array($i->type, $needtype) && ($i->type === 'movie' || $i->type === 'documovie')) {
                 $movie = $c->url('v1/items/' . $i->id);
+                if (!$movie) {
+                    echo "Failed... continuing \n";
+                    continue;
+                }
                 $itemData = $movie->item;
 
                 $src      = null;
@@ -213,17 +223,18 @@ function accessTokenAction()
 
         $result = client::verifyCode($code->code);
         if (!isset($result->status) || $result->status != 200) {
-            sleep($code->interval + 1);
+            sleep($code->interval * 2);
         }
 
         if (isset($result->access_token) && isset($result->refresh_token)) {
-            $result = client::getExtendedAccessToken($result->refresh_token);
+            #$result = client::getExtendedAccessToken($result->refresh_token);
             $accessToken = $result->access_token;
 
             echo 'Your accesToken is ' . $accessToken . ' please put it into config' . "\n";
-            echo 'Your refreshToken is ' . $result->refresh_token . ' please put it into config' . "\n";
+            #echo 'Your refreshToken is ' . $result->refresh_token . ' please put it into config' . "\n";
 
             (new client($accessToken))->setClientInfo(CLIENT_TITLE);
+            echo "Device info sent\n";
 
             exit;
             break;
