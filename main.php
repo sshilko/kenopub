@@ -229,6 +229,7 @@ function accessTokenAction()
         if (isset($result->access_token) && isset($result->refresh_token)) {
             #$result = client::getExtendedAccessToken($result->refresh_token);
             $accessToken = $result->access_token;
+            file_put_contents('ACCESS_TOKEN', $accessToken);
 
             echo 'Your accesToken is ' . $accessToken . ' please put it into config' . "\n";
             #echo 'Your refreshToken is ' . $result->refresh_token . ' please put it into config' . "\n";
