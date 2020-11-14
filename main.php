@@ -45,7 +45,7 @@ function syncData(array $needtype = ['movie', 'documovie']) {
         $end   = false;
         $items = [];
         for ($i = 1; $i < PHP_INT_MAX; $i++) {
-            sleep(1);
+            usleep(500000);
         #for ($i = 1; $i < 2; $i++) {
             $itemsRaw = $c->url('v1/bookmarks/' . $b->id . '?page=' . $i);
             if ($itemsRaw) {

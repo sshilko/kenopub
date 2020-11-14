@@ -164,7 +164,7 @@ class client
         <ID>$id</ID>
         <URL>$src</URL>
         " .
-        ((isset($fileInfo['download_content_length'])) ? ("<Size>" . (int) $fileInfo['download_content_length'] . "</Size>") : '')
+        (($fileInfo['download_content_length'] > 0) ? ("<Size>" . (int) $fileInfo['download_content_length'] . "</Size>") : '')
         . "
         " .
         ((isset($fileInfo['content_type'])) ? ("<ContentType>" . (string) $fileInfo['content_type'] . "</ContentType>") : '')

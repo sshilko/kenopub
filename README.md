@@ -4,4 +4,10 @@ This is simple keno.pub client that can access official API.
 
 Main idea is to create local copy of your Bookmarks.
 
-```php main.php help```
+```
+
+php main.php help
+php main.php accesstoken
+php main.php movies
+
+```
