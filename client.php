@@ -154,6 +154,7 @@ class client
     public static function itemToXml(int $id, string $src, string $filename, string $description, string $savedir = null): string
     {
         $filename    = mb_convert_encoding(trim($filename),             'UTF-8');
+        $filename    = \Normalizer::normalize($filename, Normalizer::FORM_C);
         $description = mb_convert_encoding(trim($description),          'UTF-8');
         $savedir     = ($savedir) ? mb_convert_encoding(trim($savedir), 'UTF-8') : '';
         $fileInfo    = self::getFileInfo($src);

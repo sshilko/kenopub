@@ -104,7 +104,9 @@ function syncData(array $needtype = ['movie', 'documovie']) {
 
                     $thumb = OUTDIR . DIRECTORY_SEPARATOR . ACTION . DIRECTORY_SEPARATOR . $filename . '.jpg';
                     if (!is_readable($thumb) && $poster) {
-                        file_put_contents(OUTDIR . DIRECTORY_SEPARATOR . ACTION . DIRECTORY_SEPARATOR . $filename . '.jpg',
+                        $jpgfile = OUTDIR . DIRECTORY_SEPARATOR . ACTION . DIRECTORY_SEPARATOR . $filename . '.jpg';
+                        $jpgfile = \Normalizer::normalize($jpgfile, Normalizer::FORM_C);
+                        file_put_contents($jpgfile,
                                           file_get_contents($poster));
                     }
                     file_put_contents(OUTDIR . DIRECTORY_SEPARATOR . ACTION . DIRECTORY_SEPARATOR . $filename . '.nfo',
