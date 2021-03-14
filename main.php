@@ -247,6 +247,11 @@ function accessTokenAction()
 
 function normalizeKinoUrl(string $url)
 {
+    $query = parse_url($url, PHP_URL_QUERY);
+    if (!empty($query)) {
+        $url = str_replace($query, '', $url);
+        $url = rtrim($url, '?');
+    }
     return str_replace(CDN_SERVER, SANE_SERVER, $url);
 }
 
